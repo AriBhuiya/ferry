@@ -1,0 +1,9 @@
+[package]
+name = "ferry-rs"
+description = "A client-server command line application to transfer files and folders. Blazing fast."
+version = "0.1.0"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+anyhow = "1"
+log = "0.4"
