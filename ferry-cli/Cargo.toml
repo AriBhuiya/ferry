@@ -1,0 +1,10 @@
+[package]
+name = "ferry-rs"
+description = "A client-server command line application to transfer files and folders. Blazing fast."
+version = "0.1.0"
+edition = "2024"
+authors = ["Aritra Bhuiya"]
+
+[dependencies]
+clap = { version = "4.5.51", features = ["derive"] }
+ferry-core = { path = "../ferry-core" }
