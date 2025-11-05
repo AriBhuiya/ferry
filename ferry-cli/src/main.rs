@@ -1,6 +1,5 @@
+use clap::{Args, Parser, Subcommand};
 use std::path::PathBuf;
-use clap::{Parser, Subcommand, Args};
-
 #[derive(Parser)]
 #[command(name = "ferry", version, about, author)]
 pub struct Cli {
@@ -11,6 +10,7 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     Serve(ServeArgs),
+    // TODO: Discover
 }
 
 #[derive(Args, Debug)]
@@ -19,6 +19,9 @@ pub struct ServeArgs {
     #[arg(short = 'H', long = "host", default_value = "127.0.0.1")]
     pub host: String,
 
+    #[arg(short = 'n', long = "name")]
+    pub name: Option<String>,
+
     /// Bind port (default: 3625 = DOCK on T9)
     #[arg(short = 'p', long = "port", default_value_t = 3625u16)]
     pub port: u16,
@@ -26,7 +29,6 @@ pub struct ServeArgs {
     /// Directory to save files (session root)
     #[arg(long = "dir", default_value_os = ".")]
     pub dir: PathBuf,
-
     // Following to be implemented later:
     // /// Require this pairing code to accept connections
     // #[arg(long = "code")]
@@ -47,6 +49,8 @@ pub struct ServeArgs {
     // /// Confirm you understand public exposure when using --host 0.0.0.0 without --code
     // #[arg(long = "confirm-public")]
     // pub confirm_public: bool,
+
+    // TODO: Ferry server should have a name for discovery
 }
 
 fn main() {
@@ -54,9 +58,8 @@ fn main() {
 
     match cli.command {
         Commands::Serve(args) => {
-            println!("Serving on {args:?}");
+            let res = ferry_core::serve(&args.host, &args.port, &args.dir, args.name.as_deref());
+            println!("{res:?}")
         }
     }
 }
-
-

@@ -5,3 +5,8 @@ version.workspace = true
 license.workspace = true
 
 [dependencies]
+names = "0.14.0"
+mdns-sd = "0.16.0"
+anyhow = "1.0.100"
+hostname = "0.4.1"
+libmdns = "0.9"
