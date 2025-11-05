@@ -8,3 +8,5 @@ authors = ["Aritra Bhuiya"]
 [dependencies]
 clap = { version = "4.5.51", features = ["derive"] }
 ferry-core = { path = "../ferry-core" }
+anyhow = "1.0.100"
+comfy-table = "7.2.1"

@@ -1,5 +1,9 @@
+mod discover;
+
+use crate::discover::discover;
 use clap::{Args, Parser, Subcommand};
 use std::path::PathBuf;
+
 #[derive(Parser)]
 #[command(name = "ferry", version, about, author)]
 pub struct Cli {
@@ -10,7 +14,7 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     Serve(ServeArgs),
-    // TODO: Discover
+    Discover(DiscoverArgs),
 }
 
 #[derive(Args, Debug)]
@@ -53,6 +57,15 @@ pub struct ServeArgs {
     // TODO: Ferry server should have a name for discovery
 }
 
+#[derive(Args, Debug)]
+pub struct DiscoverArgs {
+    /// Get all addresses
+    #[arg(short = 'a', long = "all")]
+    pub all: bool,
+    #[arg(short = 'i', long = "interval", default_value_t = 2*1000)]
+    pub interval: u64,
+}
+
 fn main() {
     let cli = Cli::parse();
 
@@ -60,6 +73,9 @@ fn main() {
         Commands::Serve(args) => {
             let res = ferry_core::serve(&args.host, &args.port, &args.dir, args.name.as_deref());
             println!("{res:?}")
+        }
+        Commands::Discover(args) => {
+            discover(args.all, args.interval).expect("Failed to run discovery");
         }
     }
 }

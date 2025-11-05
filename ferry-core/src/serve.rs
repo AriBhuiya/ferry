@@ -1,17 +1,21 @@
-use std::net::TcpListener;
-use std::path::Path;
 use crate::discovery::register_for_discovery;
 use crate::utils;
+use std::net::TcpListener;
+use std::path::Path;
 
-pub fn serve(ip: &str, port: &u16, dir: &Path, name: Option<&str>) -> anyhow::Result<()>{
+pub fn serve(ip: &str, port: &u16, dir: &Path, name: Option<&str>) -> anyhow::Result<()> {
     let name: String = name
         .map(str::to_owned)
         .unwrap_or_else(utils::name_generator::get_random_name);
 
     let res = register_for_discovery(&name, port);
     match &res {
-        Ok(_) => {println!("OK"); }
-        Err(err) => {println!("Error: {err}")}
+        Ok(_) => {
+            println!("OK");
+        }
+        Err(err) => {
+            println!("Error: {err}")
+        }
     }
     let _ann = res?;
 
@@ -25,7 +29,3 @@ pub fn serve(ip: &str, port: &u16, dir: &Path, name: Option<&str>) -> anyhow::Re
     listener.accept()?;
     Ok(())
 }
-
-
-
-
