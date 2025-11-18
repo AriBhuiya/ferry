@@ -8,6 +8,9 @@ license.workspace = true
 names = "0.14.0"
 mdns-sd = "0.16.0"
 anyhow = "1.0.100"
-hostname = "0.4.1"
-libmdns = "0.9"
 log = "0.4.28"
+async-trait = "0.1.89"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+quinn = { version = "0.11", features = ["rustls"] }
+rustls = { version = "0.23",features = ["ring"]}
+rcgen = { version = "0.14", features = ["crypto"] }
