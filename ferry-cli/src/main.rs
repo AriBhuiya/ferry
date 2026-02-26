@@ -33,6 +33,9 @@ pub struct ServeArgs {
     /// Directory to save files (session root)
     #[arg(long = "dir", default_value_os = ".")]
     pub dir: PathBuf,
+
+    #[arg(long = "tcp")]
+    pub is_tcp_mode: bool,
     // Following to be implemented later:
     // /// Require this pairing code to accept connections
     // #[arg(long = "code")]
@@ -71,7 +74,7 @@ fn main() {
 
     match cli.command {
         Commands::Serve(args) => {
-            let res = ferry_core::serve(&args.host, &args.port, &args.dir, args.name.as_deref());
+            let res = ferry_core::serve(&args.is_tcp_mode,&args.host, &args.port, &args.dir, args.name.as_deref());
             println!("{res:?}")
         }
         Commands::Discover(args) => {

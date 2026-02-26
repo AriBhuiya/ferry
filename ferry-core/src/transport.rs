@@ -1,5 +1,6 @@
 mod tcp;
 mod quic;
+pub mod factory;
 
 use anyhow;
 
@@ -22,6 +23,6 @@ pub trait TransportClient{
 #[async_trait::async_trait]
 pub trait TransportServer {
     type Conn: Transport;
-    async fn listen(&mut self,) -> anyhow::Result<()>;
+    fn bind(&mut self,) -> anyhow::Result<()>;
     async fn accept(&mut self,) -> anyhow::Result<Self::Conn>;
 }

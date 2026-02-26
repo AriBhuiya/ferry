@@ -3,6 +3,7 @@ use rustls::client::danger;
 use rustls::{DigitallySignedStruct, SignatureScheme};
 use rustls::pki_types::{CertificateDer, ServerName, UnixTime};
 
+// TODO: Plug this in
 #[derive(Debug)]
 pub struct SkipServerVerification(Arc<rustls::crypto::CryptoProvider>);
 

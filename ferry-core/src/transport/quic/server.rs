@@ -26,7 +26,7 @@ impl QuicServer {
 impl TransportServer for QuicServer {
     type Conn = QuicTransport;
 
-    async fn listen(&mut self) -> Result<()>{
+    fn bind(&mut self) -> Result<()>{
         if self.endpoint.is_some(){
             return Ok(());
         }
@@ -57,7 +57,7 @@ pub fn generate_self_signed_cert() -> Result<(CertificateDer<'static>, PrivatePk
     Ok((cert_der, key_der))
 }
 
-pub fn make_server_config() -> Result<ServerConfig, Box<dyn std::error::Error>> {
+pub fn make_server_config() -> Result<ServerConfig> {
     let (cert, key) = generate_self_signed_cert()?;
     let server_config = ServerConfig::with_single_cert(vec![cert], rustls::pki_types::PrivateKeyDer::Pkcs8(key))?;
     Ok(server_config)

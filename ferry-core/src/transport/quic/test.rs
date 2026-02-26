@@ -4,20 +4,18 @@ mod test {
     use std::time::Duration;
     use tokio::time::sleep;
     use crate::transport::quic::client::QuicClient;
-    use crate::transport::quic::server::{generate_self_signed_cert, QuicServer};
+    use crate::transport::quic::server::{generate_self_signed_cert, make_server_config, QuicServer};
     use crate::transport::{TransportClient, TransportServer};
     use crate::transport::Transport; // or the correct path to your trait
 
     #[tokio::test(flavor = "multi_thread")]
     async fn quic_roundtrip_real_stack() -> anyhow::Result<()> {
         let _ = rustls::crypto::ring::default_provider().install_default();
-
-        let (cert, key) = generate_self_signed_cert()?;
-        let server_cfg = quinn::ServerConfig::with_single_cert(vec![cert], rustls::pki_types::PrivateKeyDer::Pkcs8(key))?;
+        let server_cfg = make_server_config().expect("Failed to make server config");
 
         let bind_addr: SocketAddr = "127.0.0.1:0".parse().unwrap();
         let mut server = QuicServer::new(bind_addr, server_cfg);
-        server.listen().await?;
+        server.bind()?;
 
         let server_addr = server
             .endpoint
