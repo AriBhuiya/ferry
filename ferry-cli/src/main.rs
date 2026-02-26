@@ -1,8 +1,10 @@
 mod discover;
+mod connect;
 
 use crate::discover::discover;
 use clap::{Args, Parser, Subcommand};
 use std::path::PathBuf;
+use crate::connect::connect;
 
 #[derive(Parser)]
 #[command(name = "ferry", version, about, author)]
@@ -15,6 +17,7 @@ pub struct Cli {
 pub enum Commands {
     Serve(ServeArgs),
     Discover(DiscoverArgs),
+    Connect(ConnectArgs),
 }
 
 #[derive(Args, Debug)]
@@ -69,16 +72,34 @@ pub struct DiscoverArgs {
     pub interval: u64,
 }
 
+#[derive(Args, Debug)]
+pub struct ConnectArgs {
+    /// Bind address (default: 127.0.0.1)
+    #[arg(short = 'H', long = "host", default_value = "127.0.0.1")]
+    pub host: String,
+
+    #[arg(short = 'n', long = "name")]
+    pub name: Option<String>,
+
+    /// Bind port (default: 3625 = DOCK on T9)
+    #[arg(short = 'p', long = "port", default_value_t = 3625u16)]
+    pub port: u16,
+}
+
 fn main() {
     let cli = Cli::parse();
 
     match cli.command {
         Commands::Serve(args) => {
-            let res = ferry_core::serve(&args.is_tcp_mode,&args.host, &args.port, &args.dir, args.name.as_deref());
+            let ferry_server = ferry_core::Server::new(args.is_tcp_mode, args.host.clone(), args.port, &args.dir, args.name.clone());
+            let res = ferry_server.serve();
             println!("{res:?}")
         }
         Commands::Discover(args) => {
             discover(args.all, args.interval).expect("Failed to run discovery");
+        }
+        Commands::Connect(args) => {
+            connect(&args.host, args.port, args.name)
         }
     }
 }

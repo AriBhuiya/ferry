@@ -1,7 +1,9 @@
 mod discovery;
-mod serve;
+mod server;
 mod utils;
 mod transport;
+mod client;
 
 pub use discovery::{FerryService, discover_ferry_services};
-pub use serve::serve;
+pub use server::Server;
+pub use client::Client;
