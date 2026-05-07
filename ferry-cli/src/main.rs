@@ -99,7 +99,8 @@ fn main() {
             discover(args.all, args.interval).expect("Failed to run discovery");
         }
         Commands::Connect(args) => {
-            connect(&args.host, args.port, args.name)
+            let res = connect(&args.host, args.port, args.name);
+            println!("{res:?}")
         }
     }
 }

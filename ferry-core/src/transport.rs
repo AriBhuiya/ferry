@@ -2,6 +2,7 @@ mod tcp;
 mod quic;
 pub mod factory;
 
+use std::net::SocketAddr;
 use anyhow;
 
 /// Transport when there is a connection established
@@ -16,7 +17,7 @@ pub trait Transport {
 #[async_trait::async_trait]
 pub trait TransportClient{
     type Conn: Transport + Send;
-    async fn connect(&mut self) -> anyhow::Result<Self::Conn>;
+    async fn connect(&mut self,  server_addr: SocketAddr, server_name: &str) -> anyhow::Result<Self::Conn>;
 }
 
 /// Transport layer for listening for a connection

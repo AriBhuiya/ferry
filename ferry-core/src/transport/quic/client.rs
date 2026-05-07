@@ -8,16 +8,16 @@ use quinn::crypto::rustls::QuicClientConfig;
 use crate::transport::quic::cert_utils::SkipServerVerification;
 
 pub struct QuicClient {
-    server_addr: SocketAddr,
-    server_name: String, // for TLS? TODO: decide what to do with this
+    server_addr: Option<SocketAddr>,
+    server_name: Option<String>, // for TLS? TODO: decide what to do with this
     endpoint: Option<quinn::Endpoint>,
 }
 
 impl QuicClient {
-    pub fn new(server_addr: SocketAddr, server_name: &str) -> Self {
-        Self {
-            server_addr,
-            server_name: server_name.to_string(),
+    pub fn new() -> Self {
+        Self{
+            server_addr: None,
+            server_name: None,
             endpoint: None,
         }
     }
@@ -27,7 +27,7 @@ impl QuicClient {
 impl TransportClient for QuicClient {
     type Conn = QuicTransport;
 
-    async fn connect(&mut self) -> Result<Self::Conn> {
+    async fn connect(&mut self, server_addr: SocketAddr, server_name: &str) -> Result<Self::Conn> {
         if self.endpoint.is_none() {
             let bind_addr: SocketAddr = "[::]:0".parse().unwrap();
 
@@ -39,7 +39,7 @@ impl TransportClient for QuicClient {
 
         let endpoint = self.endpoint.as_ref().expect("endpoint just set above");
 
-        let connecting = endpoint.connect(self.server_addr, self.server_name.as_str())?;
+        let connecting = endpoint.connect(server_addr, server_name)?;
         let connection = connecting.await?;
 
         let (send, recv) = connection.open_bi().await?;
@@ -50,6 +50,7 @@ impl TransportClient for QuicClient {
 
 fn make_insecure_client_config() -> std::result::Result<ClientConfig, quinn::crypto::rustls::NoInitialCipherSuite> {
     use rustls::ClientConfig as RustlsClientConfig;
+    let _ = rustls::crypto::ring::default_provider().install_default();
 
     let crypto = RustlsClientConfig::builder()
         .dangerous()

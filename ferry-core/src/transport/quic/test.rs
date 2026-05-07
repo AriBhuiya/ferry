@@ -10,7 +10,6 @@ mod test {
 
     #[tokio::test(flavor = "multi_thread")]
     async fn quic_roundtrip_real_stack() -> anyhow::Result<()> {
-        let _ = rustls::crypto::ring::default_provider().install_default();
         let server_cfg = make_server_config().expect("Failed to make server config");
 
         let bind_addr: SocketAddr = "127.0.0.1:0".parse().unwrap();
@@ -35,8 +34,8 @@ mod test {
             Ok::<(), anyhow::Error>(())
         });
 
-        let mut client = QuicClient::new(server_addr, "localhost");
-        let mut conn = client.connect().await?;
+        let mut client = QuicClient::new();
+        let mut conn = client.connect(server_addr, "localhost").await?;
 
         let msg = b"hello quic";
         conn.send_data(msg).await?;

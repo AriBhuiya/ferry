@@ -1,9 +1,11 @@
 use std::net::SocketAddr;
 use quinn::ServerConfig;
 use crate::transport::quic::server::make_server_config;
-use crate::transport::TransportServer;
+use crate::transport::{TransportClient, TransportServer};
 use super::quic;
 use anyhow::Result;
+use crate::transport::quic::client::QuicClient;
+
 pub(crate) enum TransportType {
     Quic,
     TCP
@@ -22,3 +24,7 @@ pub fn make_tcp_server()-> Result<()>{
     anyhow::bail!("TCP Server is not supported yet")
 }
 
+pub fn make_quic_client()->impl TransportClient{
+    let quic_client = QuicClient::new();
+    quic_client
+}
